@@ -1,0 +1,95 @@
+name: Digest preview
+
+# Public publication and each later overwrite require separate human approval.
+on:
+  workflow_dispatch:
+    inputs:
+      lane_marker:
+        description: Approved public lane marker; leave empty for approved cleanup
+        type: string
+        required: false
+        default: ''
+
+permissions: {}
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - uses: pnpm/action-setup@v6
+        with:
+          version: '11.25.0'
+          run_install: false
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+      - run: pnpm typecheck
+      - uses: actions/configure-pages@v5
+      - name: Mask marker in subsequent logs
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+          const marker = JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8')).inputs?.lane_marker ?? '';
+          if (marker) console.log('::add-mask::' + marker.replaceAll('%', '%25').replaceAll('\r', '%0D').replaceAll('\n', '%0A'));
+          NODE
+      - name: Capture the running rig
+        shell: bash
+        env:
+          LANE_MARKER: ${{ inputs.lane_marker }}
+          PORT: '8787'
+        run: |
+          set -euo pipefail
+          mkdir _site
+          node --import tsx src/server.ts > "$RUNNER_TEMP/rig-preview.log" 2>&1 &
+          rig_pid=$!
+          trap 'kill "$rig_pid" 2>/dev/null || true; wait "$rig_pid" 2>/dev/null || true' EXIT
+          ready=false
+          for attempt in {1..30}; do
+            kill -0 "$rig_pid"
+            if curl --fail --silent --max-time 2 http://127.0.0.1:8787/health > /dev/null; then
+              ready=true
+              break
+            fi
+            sleep 1
+          done
+          if [ "$ready" != true ]; then
+            echo 'rig did not become healthy' >&2
+            exit 1
+          fi
+          curl --fail --silent --show-error --max-time 10 \
+            http://127.0.0.1:8787/digest/2026-10-28 --output _site/index.html
+          test -s _site/index.html
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+          retention-days: 1
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy the HTML artifact
+        id: deployment
+        uses: actions/deploy-pages@v4
