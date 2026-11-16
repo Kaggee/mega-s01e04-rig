@@ -77,3 +77,23 @@ page again with `LANE_MARKER` unset (the banner reads "no marker set") and uploa
 link. Move this plan to `docs/plans/done/` with its issue list.
 
 Done when: the preview link no longer shows the lane marker.
+
+## Issues
+
+Human-approved split and issue fields: source section, scope, done when, dependencies,
+plan label, and verification evidence before closure.
+
+| Issue | Work | Blocked by |
+|---|---|---|
+| [#1](https://github.com/Kaggee/mega-s01e04-rig/issues/1) | Shared digest contract (section 1) | — |
+| [#2](https://github.com/Kaggee/mega-s01e04-rig/issues/2) | Run log reader (section 1) | #1 |
+| [#3](https://github.com/Kaggee/mega-s01e04-rig/issues/3) | HTML digest page (section 2a) | #1 |
+| [#4](https://github.com/Kaggee/mega-s01e04-rig/issues/4) | JSON digest route (section 2b) | #1 |
+| [#5](https://github.com/Kaggee/mega-s01e04-rig/issues/5) | Status-board links and counts (section 2c) | #1 |
+| [#6](https://github.com/Kaggee/mega-s01e04-rig/issues/6) | Route tests (section 2d) | #1 |
+| [#7](https://github.com/Kaggee/mega-s01e04-rig/issues/7) | Public HTML preview for review (section 3) | #2, #3, #4, #5, #6 |
+| [#8](https://github.com/Kaggee/mega-s01e04-rig/issues/8) | Remove public marker and archive plan (section 4) | #7 |
+
+The contract commit enables the four section 2 workers independently. Their final checks
+use the integrated reader; preview publication waits for all five implementation tasks.
+Public preview publication and its later overwrite each require separate human approval.
