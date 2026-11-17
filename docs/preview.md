@@ -23,7 +23,8 @@ one day; the deployed page does not expire with it.
 
 After deployment, fetch the public URL and verify the sample rows and lane banner. Send
 the URL and <https://github.com/Kaggee/mega-s01e04-rig/issues> to the reviewer through
-`claim-challenge`. Only then does #7 meet its done condition.
+`claim-challenge`. Issue #7 meets its done condition only after the reviewer has looked at
+the preview and the course confirms that review; sending the link alone is not enough.
 
 ## Local capture without publication
 
@@ -45,8 +46,8 @@ publication is approved.
 
 Issue #8 requires a separate human approval after review. Once approved, run this same
 workflow with `lane_marker` empty, producing the same page with `no marker set`, and
-overwrite the exact same URL. Verify the public response, then delete the earlier
-marker-bearing Actions artifact and workflow run (including its logs and input metadata).
-Artifact expiry alone does not remove the public marker. Archiving the plan belongs to #8.
+overwrite the exact same URL. Verify the public response no longer contains the marker.
+Artifact expiry alone does not remove the marker from the deployed page. Archiving the
+plan belongs to #8.
 
 Workflow reference: [GitHub's custom Pages workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).

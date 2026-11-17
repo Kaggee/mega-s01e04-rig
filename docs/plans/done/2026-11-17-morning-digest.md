@@ -1,8 +1,9 @@
 ---
 plan: morning-digest
-status: ready
+status: done
 owner: rook
 opened: 2026-10-29
+closed: 2026-11-17
 ---
 
 # Morning digest
@@ -97,3 +98,24 @@ plan label, and verification evidence before closure.
 The contract commit enables the four section 2 workers independently. Their final checks
 use the integrated reader; preview publication waits for all five implementation tasks.
 Public preview publication and its later overwrite each require separate human approval.
+
+## Completion record
+
+The reviewer confirmed the preview had been seen before the marker-free overwrite. Issue #7
+is closed. The cleanup workflow [run 44094100198](https://github.com/Kaggee/mega-s01e04-rig/actions/runs/44094100198)
+succeeded, including tests and typechecking. The same public URL
+<https://kaggee.github.io/mega-s01e04-rig/> now returns the five-row page without the lane
+marker; its banner says `no marker set`. The captured page differs from the original only
+at the marker text.
+
+Implementation commits recorded for the completed work:
+
+| Issue | Commit |
+|---|---|
+| #1 shared digest contract | `b733854` |
+| #2 run log reader | `3fec057` |
+| #3 HTML digest page | `0f742e4` |
+| #4 JSON digest route | `f23e8a0` |
+| #5 status-board links and counts | `1f4fb8f` |
+| #6 route tests | `498c8da` |
+| #7 public preview workflow | `e3178e8` |
